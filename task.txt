@@ -1,0 +1,19 @@
+Hi,
+Hope your day is perfect.
+
+Here is the test project. Please make sure to do your best here. We need to evaluate your performance in real-life projects.
+Also, Please understand that we will never use your work without your permission. You can also upload the final code on GitHub if you like or share it with any other parties,
+We can't stress this enough.
+
+The test project description:
+- the client wants to create a simple multiple-choice quiz system. He is a teacher and would like to be able to quiz his students and evaluate them.
+- quiz time is 20 minutes after this time student session for this exam will be expired 
+- student can perform exam once time 
+- after finishing exam , e-mail will send to admin , and Admin will resend email to student with score and result (Accepted or Rejected)
+
+- the quiz system should be private. Users including admins need to login to access the system.
+- A regular user should be able to login, take a test, and answer the questions then review a report of his answers with the correct answers and grade.
+-The admin should get an email when a test is finished.
+questions are multiple choices only and each question has 4 choices and one correct answer.
+
+Thank you and good luck
