@@ -13,7 +13,7 @@ class QuizController extends Controller
      */
     public function index()
     {
-        $quizzes = Quiz::all();
+        $quizzes = Quiz::all()->sortByDesc('id');
         if (request()->ajax()) {
             return datatables()->collection($quizzes)->toJson();
         }

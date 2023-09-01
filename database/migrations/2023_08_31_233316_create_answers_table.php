@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('question_id')->constrained();
             $table->foreignId('exam_id')->constrained();
-            $table->foreignId('choice_id')->constrained();
+            $table->foreignId('choice_id')->nullable()->constrained();
             $table->timestamps();
         });
     }

@@ -24,4 +24,9 @@ class Question extends Model
     {
         return $this->hasMany(Choice::class);
     }
+
+    public function correctChoice()
+    {
+        return $this->choices()->where('is_correct', true);
+    }
 }

@@ -11,7 +11,7 @@ class StoreExamRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class StoreExamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'quiz_id' => 'required|exists:quizzes,id',
         ];
     }
 }

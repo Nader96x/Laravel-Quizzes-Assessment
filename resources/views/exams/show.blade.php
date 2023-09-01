@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Quiz #{{$quiz->id}}: {{$quiz->title}}</h1>
+                <h1>Quiz #{{$exam->quiz->id}}: {{$quiz->title}}</h1>
                 <hr>
             </div>
         </div>
@@ -15,52 +15,7 @@
                 </a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12 mt-3">
-                <p id="new-question-btn" class="btn btn-success">
-                    <i class="fas fa-arrow-left"></i> Create Question
-                </p>
-                @include('partials.flash-message')
-                {{--                    @include('partials.errors')--}}
-                <div id="new-question-form" @class([
-                    "d-none" => !$errors->any()
-                ])>
 
-
-                    <form
-                    action="{{ route('questions.store') }}"
-                    method="POST"
-                    class="border p-5 mt-3 mb-3">
-                    @csrf
-                    <input type="hidden" name="quiz_id" value="{{ $quiz->id }}">
-
-                    <div class="form-group">
-                        <label class="h3" for="content">Question : </label>
-                        <input type="text" class="form-control" id="content" name="content" value="{{old("content")}}" required>
-                        @error('content')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
-                        <hr/>
-                    </div>
-                    @for($i = 1; $i <= 4; $i++)
-                        <div class="form-group">
-                            <label for="content">Choice {{$i}}</label>
-                            <input type="radio" @checked(old("is_correct") == $i) name="is_correct" value="{{$i}}" required>
-                            <input type="text" class="form-control" id="content" name="choices[{{$i}}][content]" value="{{old("choices.$i.content")}}" required>
-                            @error("choices.$i.content")
-                            <small class="text-danger">{{ $message }}</small>
-                            @enderror
-                        </div>
-                    @endfor
-
-                    <button type="submit" class="btn btn-primary mt-3">Save</button>
-
-
-
-                </form>
-                </div>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12">
                 <table class="table text-center align-middle" id="table">
@@ -84,8 +39,13 @@
                             <td>{{ $question->content }}</td>
                             <td>
                                 <ul>
+                                        <?php $qid = $question->id;?>
                                     @foreach($question->choices as $answer)
-                                        <li @class(['bg-success text-light'=>$answer->is_correct])>{{ $answer->content }}</li>
+                                            <?php $ch_id = $question->id;?>
+                                        <div class="form-check">
+                                        <input type="radio" name="ans" id="{{"q-$qid-ch-$ch_id"}}" value="{{$ch_id}}" required>
+                                        <span for="{{"q-$qid-ch-$ch_id"}}" @class(['bg-success text-light'=>$answer->is_correct])>{{ $answer->content }}</span>
+                                        </div>
                                     @endforeach
                                 </ul>
                             <td>{{ $question->created_at }}</td>

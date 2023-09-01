@@ -17,7 +17,7 @@ class QuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            'question' => $this->faker->sentence,
+            'content' => $this->faker->sentence,
             'quiz_id' => \App\Models\Quiz::all()->random()->id,
         ];
     }

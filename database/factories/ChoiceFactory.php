@@ -17,7 +17,9 @@ class ChoiceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'content' => $this->faker->sentence,
+            'is_correct' => $this->faker->boolean,
+            'question_id' => \App\Models\Question::all()->random()->id,
         ];
     }
 }

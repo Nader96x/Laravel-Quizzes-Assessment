@@ -18,9 +18,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $i = 1; ?>
                         @foreach($quizzes as $quiz)
                             <tr>
-                                <td>{{ $quiz->id }}</td>
+                                <td>{{ $i++ }}</td>
                                 <td>{{ $quiz->title }}</td>
                                 <td>{{ $quiz->created_at }}</td>
                                 <td>

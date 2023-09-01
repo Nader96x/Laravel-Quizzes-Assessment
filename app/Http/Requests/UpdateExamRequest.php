@@ -11,7 +11,7 @@ class UpdateExamRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateExamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'finished' => 'boolean',
+            'choice_id' => 'required|exists:choices,id',
+            'question_id' => 'required|exists:questions,id',
         ];
     }
 }

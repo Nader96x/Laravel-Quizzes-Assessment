@@ -16,4 +16,23 @@ class Exam extends Model
         'status',
         'ended_at',
     ];
+
+    public function quiz()
+    {
+        return $this->belongsTo(Quiz::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function answers()
+    {
+         return $this->hasMany(Answer::class);
+    }
+
+    public function getDeadlineAttribute(){
+        return $this->created_at->addMinute(20);
+    }
 }
