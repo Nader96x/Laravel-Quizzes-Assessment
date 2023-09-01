@@ -15,6 +15,8 @@
                             <th>ID</th>
                             <th>Exam Title</th>
                             <th>Student</th>
+                            <th>Status</th>
+                            <th>Score</th>
                             <th width="15%">Created At</th>
                             <th width="10%">Actions</th>
                         </tr>
@@ -26,6 +28,8 @@
                                 <td>{{ $i++ }}</td>
                                 <td>{{ $exam->quiz->title }}</td>
                                 <td>{{ $exam->user->name }}</td>
+                                <td>{{ $exam->status }}</td>
+                                <td>{{ isset($exam->score) ? $exam->score."/".$exam->quiz->questions->count() : "" }} {{ isset($exam->score)?  "(".($exam->score / $exam->quiz->questions->count() * 100)."%)":"" }}</td>
                                 <td>{{ $exam->created_at }}</td>
 
                                 <td>

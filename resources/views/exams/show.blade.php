@@ -4,12 +4,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Quiz #{{$exam->id}}: {{$quiz->title}}</h1>
+                <h1>Quiz #{{$quiz->id}}: {{$quiz->title}}</h1>
                 <hr>
             </div>
         </div>
         <div class="row">
             @role("user")
+
             <div class="col-md-12 h4">
                 Time To Expire: <span class="text-primary" id="timer"></span>
 {{--                <a class="btn btn-primary" href="{{ route('exams.index') }}">--}}
@@ -55,7 +56,7 @@
                                             <?php $ch_id = $choice->id;?>
                                         <div class="form-check" id="{{$qid}}">
                                         <input @disabled($exam->ended_at) @checked($answer?->question_id == $qid && $answer?->choice_id == $ch_id) type="radio" name="answer-{{$qid}}" id="{{"q-$qid-ch-$ch_id"}}" value="{{$ch_id}}" required>
-                                        <label for="{{"q-$qid-ch-$ch_id"}}" @class(['bg-success text-light'=>$choice->is_correct && \Illuminate\Support\Facades\Auth::user()->hasRole("admin")])>{{ $choice->content }}</label>
+                                        <label for="{{"q-$qid-ch-$ch_id"}}" @class(['bg-success text-light'=>$choice->is_correct && ($exam->ended_at || \Illuminate\Support\Facades\Auth::user()->hasRole("admin"))])>{{ $choice->content }}</label>
                                         </div>
                                     @endforeach
                                 </ul>
@@ -65,6 +66,7 @@
 
                     @endforeach
                     @role("user")
+                    @if(!$exam->ended_at)
                     <tr>
                         <td colspan="4">
                             <form action="{{route('exams.update',$exam->id)}}" method="POST">
@@ -76,6 +78,7 @@
                             </form>
                         </td>
                     </tr>
+                    @endif
                     @endrole
                     </tbody>
                 </table>
@@ -130,8 +133,10 @@
                 }).then((data)=>{
                     console.log(data);
                     if(data.message)document.getElementById("message").innerHTML = data.message;
+                    if(!data.success) window.location.reload();
                 }).catch((error)=>{
                     document.getElementById("message").innerHTML = "Error: "+error;
+                    window.location.reload();
                 })
             }))
 

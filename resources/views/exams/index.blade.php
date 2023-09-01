@@ -122,9 +122,9 @@
                                 <td>{{ $exam->quiz->title }}</td>
                                 <td>{{ $exam->score }}</td>
                                 <td @class([
-                                        "text-success" => $exam->result == "Accepted",
-                                        "text-danger"  => $exam->result == "Rejected",
-        ]                           )>{{ $exam->result??"Pending" }}</td>
+                                        "text-success" => $exam->status == "Accepted",
+                                        "text-danger"  => $exam->status == "Rejected",
+        ]                           )>{{ $exam->status??"Pending" }}</td>
                                 <td>{{ $exam->created_at }}</td>
                                 <td>{{ $exam->ended_at }}</td>
 

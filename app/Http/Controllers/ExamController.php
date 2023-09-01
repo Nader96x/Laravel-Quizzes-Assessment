@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreExamRequest;
 use App\Http\Requests\UpdateExamRequest;
-use App\Jobs\CalculateExamScore;
+use App\Jobs\CalculateExamScoreJob;
+use App\Mail\AdminMail;
 use App\Models\Exam;
 use App\Models\Quiz;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ExamController extends Controller
 {
@@ -60,8 +63,7 @@ class ExamController extends Controller
             'ended_at' => null,
         ]);
 
-
-        dispatch(new CalculateExamScore($exam))->delay(now()->addMinutes(20));
+        dispatch(new CalculateExamScoreJob($exam))->delay(now()->addMinutes(1));
 
         return redirect()->route('exams.show', $exam);
     }
@@ -75,9 +77,9 @@ class ExamController extends Controller
         if (Auth::user()->hasRole('user') && Auth::user()->id != $exam->user_id)
             return redirect()->back()->with("error","You Can't Access Endpoint Exams Yours.");
 //        dd($exam->created_at,$exam->deadline,now());
-        if (Auth::user()->hasRole("user") && $exam->ended_at != null) {
-            return redirect()->route('exams.index')->with('error', 'You have already submitted this exam wait for your result.');
-        }
+//        if (Auth::user()->hasRole("user") && $exam->ended_at != null) {
+//            return redirect()->route('exams.index')->with('error', 'You have already submitted this exam wait for your result.');
+//        }
         $quiz = $exam->quiz;
         $questions = $exam->quiz->questions()->with('choices')->get();
         $answers = $exam->answers()->get();
@@ -99,7 +101,7 @@ class ExamController extends Controller
     public function update(UpdateExamRequest $request, Exam $exam)
     {
         if (Auth::user()->id != $exam->user_id)
-            return redirect()->back()->with("error","You Can't Access Endpoint Exams Yours.");
+            return redirect()->back()->with("error","You can't access this Exam.");
 
 
         if($exam->ended_at != null){
@@ -119,6 +121,7 @@ class ExamController extends Controller
             $exam->update([
                 'ended_at' => now(),
             ]);
+            dispatch(new CalculateExamScoreJob($exam));
 //            dd($exam);
             return redirect()->route('exams.index')->with("success","You successfully finish the exam, Please wait for your results.");
 

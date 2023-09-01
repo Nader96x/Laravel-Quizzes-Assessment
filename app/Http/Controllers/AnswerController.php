@@ -10,61 +10,41 @@ use Illuminate\Support\Facades\Auth;
 
 class AnswerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAnswerRequest $request)
-    {
-
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Answer $answer)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Answer $answer)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateAnswerRequest $request)
     {
-//        $exam = Exam::first()->where(["id"=>$id])->get();
-//        dd($exam->f);
+        $exam = Exam::find($request->exam_id);
 
-//        if(!$exam) return redirect()->route('exams.index')->with("error","there is no exam with this ID.");
-//        dd([
-//            'question_id' => $request->question_id,
-//            'user_id' => Auth::user()->id,
-//            'exam_id' => $id,
-//            'choice_id' => $request->choice_id,
-//        ]);
+        if(!$exam) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam not found.',
+            ]);
+        }
+        if($exam->ended_at != null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam has ended.',
+            ]);
+        }
+
+        if ($exam->created_at->addMinutes(20) < now() && $request->json()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Time limit exceeded.',
+            ]);
+        }
+
+        if (Auth::user()->id != $exam->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can\'t access this exam.',
+            ]);
+        }
+
         Answer::updateOrCreate([
             'question_id' => $request->question_id,
             'user_id' => Auth::user()->id,
@@ -79,11 +59,5 @@ class AnswerController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Answer $answer)
-    {
-        //
-    }
+
 }

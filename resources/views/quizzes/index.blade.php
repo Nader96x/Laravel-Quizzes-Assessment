@@ -13,6 +13,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Quiz Title</th>
+                            <th>Total Questions</th>
                             <th width="20%">Created At</th>
                             <th width="20%">Actions</th>
                         </tr>
@@ -23,6 +24,7 @@
                             <tr>
                                 <td>{{ $i++ }}</td>
                                 <td>{{ $quiz->title }}</td>
+                                <td>{{ $quiz->questions->count() }}</td>
                                 <td>{{ $quiz->created_at }}</td>
                                 <td>
                                     <div class="d-flex justify-content-around">
