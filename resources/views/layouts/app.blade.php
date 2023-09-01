@@ -21,6 +21,47 @@
 
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+        <a class="navbar-brand" href="#">Quizzes App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse " id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                @auth
+                <li class="nav-item" @class([
+                    'active' => request()->routeIs('exams.index')
+                ])>
+                    <a class="nav-link" href="{{route("exams.index")}}">Exams</a>
+                </li>
+                @role('admin')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route("quizzes.index")}}">Quizzes</a>
+                </li>
+                @endrole
+
+                <li class="nav-item">
+
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button class="nav-link" >{{ __('Logout') }}</button>
+                    </form>
+                </li>
+            </ul>
+                    @else
+                <ul class="navbar-nav ml-auto"> <!-- This ul is for right-aligned items -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route("login") }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route("register") }}">Register</a>
+                    </li>
+                </ul>
+                     @endauth
+
+        </div>
+    </nav>
     <div id="app">
 {{--           @include('partials.navbar')--}}
         <main class="py-4">

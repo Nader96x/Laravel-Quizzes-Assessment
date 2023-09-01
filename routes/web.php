@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,13 +22,19 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('/quizzes', 'QuizController');
     Route::resource('/questions', 'QuestionController');
-    Route::resource('/users', 'UserController');
+//    Route::resource('/users', 'UserController');
 });
 
-Route::resource('/answers', 'AnswerController');
+Route::put('/answers', 'AnswerController@update')->name("answers.update")->middleware("auth");
 Route::resource('/exams', 'ExamController')->middleware('auth');
 
 
 Auth::routes();
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return to_route("login");
+})->name('logout');
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreExamRequest;
 use App\Http\Requests\UpdateExamRequest;
+use App\Jobs\CalculateExamScore;
 use App\Models\Exam;
 use App\Models\Quiz;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,11 @@ class ExamController extends Controller
      */
     public function index()
     {
+//        dd(Auth::user());
+        if (Auth::user()->hasRole('admin')) {
+            $exams = Exam::all()->where('ended_at', '!=', null);
+            return view('admin.exams.index', compact('exams'));
+        }
         $exams = Auth::user()->exams()->get();
 
         $history = $exams->filter(fn ($exam) => $exam->ended_at != null);
@@ -44,25 +50,19 @@ class ExamController extends Controller
         }
 
         // CHECK IF USER IS TAKING THE QUIZ WITHIN THE TIME LIMIT
-        if (Auth::user()->exams()->where('created_at', '>=', now()->subMinutes(20))->exists()) {
+        if (Auth::user()->exams()->where('ended_at', '=', null)->exists()) {
             return redirect()->route('exams.index')->with('error', 'You can only take one quiz at a time.');
         }
-        DB::transaction(function () use ($request) {
-            $exam = Exam::create([
-                'user_id' => Auth::user()->id,
-                'quiz_id' => $request->quiz_id,
-                'ended_at' => null,
-            ]);
 
-            $exam->quiz->questions()->get()->each(function ($question) use ($exam) {
-                $exam->answers()->create([
-                    'question_id' => $question->id,
-                    'user_id' => Auth::user()->id,
-                    'exam_id' => $exam->id,
-                ]);
-            });
-        });
-        $exam = Exam::where('user_id', Auth::user()->id)->where('quiz_id', $request->quiz_id)->first();
+        $exam = Exam::create([
+            'user_id' => Auth::user()->id,
+            'quiz_id' => $request->quiz_id,
+            'ended_at' => null,
+        ]);
+
+
+        dispatch(new CalculateExamScore($exam))->delay(now()->addMinutes(20));
+
         return redirect()->route('exams.show', $exam);
     }
 
@@ -71,9 +71,18 @@ class ExamController extends Controller
      */
     public function show(Exam $exam)
     {
+
+        if (Auth::user()->hasRole('user') && Auth::user()->id != $exam->user_id)
+            return redirect()->back()->with("error","You Can't Access Endpoint Exams Yours.");
+//        dd($exam->created_at,$exam->deadline,now());
+        if (Auth::user()->hasRole("user") && $exam->ended_at != null) {
+            return redirect()->route('exams.index')->with('error', 'You have already submitted this exam wait for your result.');
+        }
         $quiz = $exam->quiz;
-        $questions = $quiz->questions()->with('choices')->get();
-        return view('exams.show', compact('exam', 'quiz', 'questions'));
+        $questions = $exam->quiz->questions()->with('choices')->get();
+        $answers = $exam->answers()->get();
+
+        return view('exams.show', compact('exam', 'questions', 'quiz', 'answers'));
     }
 
     /**
@@ -89,30 +98,33 @@ class ExamController extends Controller
      */
     public function update(UpdateExamRequest $request, Exam $exam)
     {
+        if (Auth::user()->id != $exam->user_id)
+            return redirect()->back()->with("error","You Can't Access Endpoint Exams Yours.");
+
+
         if($exam->ended_at != null){
             return redirect()->route('exams.show', $exam)->with('error', 'You have already submitted this exam.');
         }
 
-        if ($exam->created_at->addMinutes(20) < now()) {
-            return redirect()->route('exams.show', $exam)->with('error', 'You have exceeded the time limit.');
+        if ($exam->created_at->addMinutes(20) < now() && $request->json()) {
+//            if ($request->json())
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Time limit exceeded.',
+                ]);
+//            else
+//                return redirect()->route("exams.index")->with("error","Your time is over.");
         }
-        if ($request->has('finish') && $request->finished) {
+        if (Auth::user()->hasRole("user") && $request->has('finished')) {
             $exam->update([
                 'ended_at' => now(),
             ]);
-            return redirect()->route('exams.index')->with('success', 'Exam submitted successfully.');
+//            dd($exam);
+            return redirect()->route('exams.index')->with("success","You successfully finish the exam, Please wait for your results.");
+
         }
 
-        $exam->answers()->updateOrCreate([
-            'question_id' => $request->question_id,
-            'user_id' => Auth::user()->id,
-            'exam_id' => $exam->id,
-        ], [
-            'choice_id' => $request->choice_id,
-        ]);
-
-        return redirect()->route('exams.show', $exam);
-
+        return redirect()->route('exams.index');
 
     }
 

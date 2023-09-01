@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreExamRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreExamRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::user()->hasRole("user");
     }
 
     /**
@@ -23,6 +24,7 @@ class StoreExamRequest extends FormRequest
     {
         return [
             'quiz_id' => 'required|exists:quizzes,id',
+
         ];
     }
 }

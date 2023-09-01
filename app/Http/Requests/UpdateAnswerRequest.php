@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateAnswerRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateAnswerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->hasRole("user");
     }
 
     /**
@@ -22,7 +23,8 @@ class UpdateAnswerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'choice_id' => 'required|exists:choices,id',
+            'question_id' => 'required|exists:questions,id',
         ];
     }
 }

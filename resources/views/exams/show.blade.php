@@ -4,16 +4,24 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1>Quiz #{{$exam->quiz->id}}: {{$quiz->title}}</h1>
+                <h1>Quiz #{{$exam->id}}: {{$quiz->title}}</h1>
                 <hr>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
-                <a class="btn btn-primary" href="{{ route('quizzes.index') }}">
-                    <i class="fas fa-arrow-left"></i> Back to Quizzes
-                </a>
+            @role("user")
+            <div class="col-md-12 h4">
+                Time To Expire: <span class="text-primary" id="timer"></span>
+{{--                <a class="btn btn-primary" href="{{ route('exams.index') }}">--}}
+{{--                    <i class="fas fa-arrow-left"></i> Back to Quizzes--}}
+{{--                </a>--}}
             </div>
+
+            <div class="col-md-12">
+                <p id="message" class="h4 text-danger"></p>
+            </div>
+            <hr/>
+            @endrole
         </div>
 
         <div class="row">
@@ -24,50 +32,56 @@
                         <th>ID</th>
                         <th>Question</th>
                         <th>Choices</th>
-                        <th>Created At</th>
-                        <th>Actions</th>
+{{--                        <th>Created At</th>--}}
+
                     </tr>
                     </thead>
                     <tbody>
-                    <?php $questions = $quiz->questions()->get()->sortByDesc('id');?>
+
                     <?php $i=1;?>
 
                     @foreach($questions as $question)
 {{--                        @dd($question)--}}
                         <tr>
+
                             <td>{{ $i++ }}</td>
-                            <td>{{ $question->content }}</td>
-                            <td>
+                            <td style="text-align: left;">{{ $question->content }}</td>
+                            <td style="text-align: left;" >
                                 <ul>
                                         <?php $qid = $question->id;?>
-                                    @foreach($question->choices as $answer)
-                                            <?php $ch_id = $question->id;?>
-                                        <div class="form-check">
-                                        <input type="radio" name="ans" id="{{"q-$qid-ch-$ch_id"}}" value="{{$ch_id}}" required>
-                                        <span for="{{"q-$qid-ch-$ch_id"}}" @class(['bg-success text-light'=>$answer->is_correct])>{{ $answer->content }}</span>
+<?php $answer = $answers->first(function ($answer)use($qid){ return $answer?->question_id == $qid;});?>
+
+                                    @foreach($question->choices as $choice)
+                                            <?php $ch_id = $choice->id;?>
+                                        <div class="form-check" id="{{$qid}}">
+                                        <input @disabled($exam->ended_at) @checked($answer?->question_id == $qid && $answer?->choice_id == $ch_id) type="radio" name="answer-{{$qid}}" id="{{"q-$qid-ch-$ch_id"}}" value="{{$ch_id}}" required>
+                                        <label for="{{"q-$qid-ch-$ch_id"}}" @class(['bg-success text-light'=>$choice->is_correct && \Illuminate\Support\Facades\Auth::user()->hasRole("admin")])>{{ $choice->content }}</label>
                                         </div>
                                     @endforeach
                                 </ul>
-                            <td>{{ $question->created_at }}</td>
-                            <td>
-                                <div class="d-flex justify-content-around">
-                                    <a class="btn btn-info btn-sm mr-2" href="{{ route('questions.edit', $question->id) }}">
-                                        <i class="fas fa-pencil-alt"></i> Edit
-                                    </a>
-                                    <form action="{{ route('questions.destroy', $question->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm mr-2">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+{{--                            <td>{{ $question->created_at }}</td>--}}
+
                         </tr>
+
                     @endforeach
+                    @role("user")
+                    <tr>
+                        <td colspan="4">
+                            <form action="{{route('exams.update',$exam->id)}}" method="POST">
+                                @csrf
+                                @method("PATCH")
+                                <input type="hidden" name="finished" value="1"/>
+                                <button class="btn btn-primary w-50" >Finish</button>
+
+                            </form>
+                        </td>
+                    </tr>
+                    @endrole
                     </tbody>
                 </table>
             </div>
+
+
 
         </div>
     </div>
@@ -76,12 +90,52 @@
 @push("scripts")
 
     <script>
-        const form = document.getElementById("new-question-form");
+        window.onload = function() {
+            let deadline = new Date("{{$exam->deadline}}").getTime();
+            {{--console.log(deadline,"{{$exam->deadline}}")--}}
+            let x = setInterval(function() {
+                //now in UTC +00
+                let now = new Date().getTime()+new Date().getTimezoneOffset()*60*1000;
+                // console.log(now)
+                let t = deadline - now;
+                let minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((t % (1000 * 60)) / 1000);
+                document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s ";
+                if (t < 0) {
+                    clearInterval(x);
+                    document.getElementById("timer").innerHTML = "EXPIRED";
+                    // document.getElementById("submit").click();
+                }
+            }, 1000);
 
-        document.getElementById("new-question-btn").addEventListener("click", function () {
 
-            form.classList.toggle("d-none");
-        });
+            let choices = document.querySelectorAll("input[type=radio]");
+            choices.forEach((choice)=>choice.addEventListener('click',function (e) {
+                let question_id = e.target.parentElement.id;
+                let choice_id = e.target.value;
+                let exam_id = {{$exam->id}};
+                let url = "{{route('answers.update')}}";
+                let data = {question_id,choice_id,exam_id,_method:'PUT'};
+                console.log(data);
+                fetch(url,{
+                    method:'POST',
+                    headers:{
+                        'Content-Type':'application/json',
+                        'Accept':'application/json',
+                        'X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body:JSON.stringify(data)
+                }).then((response) => {
+                    return response.json(); // Assuming the response is JSON data
+                }).then((data)=>{
+                    console.log(data);
+                    if(data.message)document.getElementById("message").innerHTML = data.message;
+                }).catch((error)=>{
+                    document.getElementById("message").innerHTML = "Error: "+error;
+                })
+            }))
+
+        }
 
     </script>
 @endpush

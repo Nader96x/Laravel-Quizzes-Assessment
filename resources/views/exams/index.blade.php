@@ -14,6 +14,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Exam Title</th>
+                            <th>Total Questions</th>
                             <th width="15%">Created At</th>
                             <th width="10%">Actions</th>
                         </tr>
@@ -24,6 +25,7 @@
                             <tr>
                                 <td>{{ $i++ }}</td>
                                 <td>{{ $quiz->title }}</td>
+                                <td>{{ $quiz->questions->count() }}</td>
                                 <td>{{ $quiz->created_at }}</td>
 
                                 <td>
@@ -40,6 +42,12 @@
                                 </td>
                             </tr>
                         @endforeach
+
+                        @if(!$available->count())
+                            <tr>
+                                <td colspan="6" class="text-center h3">No Data Yet.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 
@@ -71,12 +79,19 @@
                                 <td>
                                     <div class="d-flex justify-content-around">
                                         <a class="btn btn-success btn-sm mr-2" href="{{ route('exams.show', $exam->id) }}">
-                                            <i class="fas fa-eye"></i> Show Details
+                                            <i class="fas fa-eye"></i> Continue
                                         </a>
                                     </div>
                                 </td>
                             </tr>
+
                         @endforeach
+
+                        @if(!$progressing->count())
+                            <tr>
+                                <td colspan="6" class="text-center h3">No Data Yet.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 
@@ -84,7 +99,7 @@
         </div>
         <div class="row  mt-5">
             <div class="col-md-12">
-                <h1>Your Quizzes History</h1>
+                <h1>Your Result History</h1>
                 <hr>
 {{--                @include('partials.flash-message')--}}
                 <table class="table" id="table">
@@ -95,6 +110,7 @@
                             <th>Score</th>
                             <th>Result</th>
                             <th width="15%">Created At</th>
+                            <th width="15%">Submited At</th>
                             <th width="10%">Actions</th>
                         </tr>
                     </thead>
@@ -105,18 +121,28 @@
                                 <td>{{ $i++ }}</td>
                                 <td>{{ $exam->quiz->title }}</td>
                                 <td>{{ $exam->score }}</td>
-                                <td>{{ $exam->result }}</td>
+                                <td @class([
+                                        "text-success" => $exam->result == "Accepted",
+                                        "text-danger"  => $exam->result == "Rejected",
+        ]                           )>{{ $exam->result??"Pending" }}</td>
                                 <td>{{ $exam->created_at }}</td>
+                                <td>{{ $exam->ended_at }}</td>
 
                                 <td>
                                     <div class="d-flex justify-content-around">
-                                        <a class="btn btn-success btn-sm mr-2" href="{{ route('quizzes.show', $quiz->id) }}">
-                                            <i class="fas fa-eye"></i> Show Details
+                                        <a class="btn btn-success btn-sm mr-2" href="{{ route('exams.show', $exam->id) }}">
+                                            <i class="fas fa-eye"></i> Show Results
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                         @endforeach
+
+                        @if(!$history->count())
+                            <tr>
+                                <td colspan="6" class="text-center h3">No Data Yet.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 

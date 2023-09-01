@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreQuizRequest;
 use App\Http\Requests\UpdateQuizRequest;
 use App\Models\Quiz;
+use Illuminate\Support\Facades\Auth;
 
 class QuizController extends Controller
 {
@@ -13,6 +14,7 @@ class QuizController extends Controller
      */
     public function index()
     {
+//        dd(Auth::user()->hasRole('admin'));
         $quizzes = Quiz::all()->sortByDesc('id');
         if (request()->ajax()) {
             return datatables()->collection($quizzes)->toJson();

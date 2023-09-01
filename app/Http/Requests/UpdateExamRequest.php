@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateExamRequest extends FormRequest
 {
@@ -23,8 +24,7 @@ class UpdateExamRequest extends FormRequest
     {
         return [
             'finished' => 'boolean',
-            'choice_id' => 'required|exists:choices,id',
-            'question_id' => 'required|exists:questions,id',
+
         ];
     }
 }
