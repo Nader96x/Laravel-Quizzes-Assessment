@@ -67,7 +67,7 @@
                                     <form action="{{ route('questions.destroy', $question->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm mr-2">
+                                        <button type="submit" name="deleteBtn" class="btn btn-danger btn-sm mr-2">
                                             <i class="fas fa-trash-alt"></i> Delete
                                         </button>
                                     </form>
@@ -86,6 +86,21 @@
 @push("scripts")
 
     <script>
+
+        function confirmDelete(e){
+            const result =  confirm("Are you sure you want to delete this question?");
+            if(result){
+                return true;
+            }else{
+                e.preventDefault();
+            }
+        }
+        deleteBtns = document.getElementsByName("deleteBtn");
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click',confirmDelete);
+        });
+
+
         const form = document.getElementById("new-question-form");
 
         document.getElementById("new-question-btn").addEventListener("click", function () {
