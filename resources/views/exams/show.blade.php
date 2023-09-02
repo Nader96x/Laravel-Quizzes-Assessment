@@ -50,7 +50,7 @@
                             <td>{{ $i++ }}</td>
                             <td style="text-align: left;">{{ $question->content }}</td>
                             <td style="text-align: left;" >
-                                <ul>
+                                <ul name="radios">
                                         <?php $qid = $question->id;?>
 <?php $answer = $answers->first(function ($answer)use($qid){ return $answer?->question_id == $qid;});?>
 
@@ -74,8 +74,8 @@
                             <form action="{{route('exams.update',$exam->id)}}" method="POST">
                                 @csrf
                                 @method("PATCH")
-                                <input type="hidden" name="finished" value="1"/>
-                                <button class="btn btn-primary w-50" >Finish</button>
+                                <input type="hidden"  name="finished" value="1"/>
+                                <button class="btn btn-primary w-50" id="finishBtn" >Finish</button>
 
                             </form>
                         </td>
@@ -96,6 +96,35 @@
 
     <script>
         window.onload = function() {
+            function verifyRadio(e){
+                let uls = document.querySelectorAll("ul[name=radios]");
+                for(let ul of uls){
+                    if(ul.querySelectorAll("input[type=radio]:checked").length == 0) {
+                        return confirmFinish2(e);
+                    }
+                }
+                return true;
+
+            }
+            function confirmFinish2(e){
+                const result =  confirm("You have not answered all questions, are you sure you want to Finish this exam?");
+                if(result){
+                    return true;
+                }else{
+                    e.preventDefault();
+                }
+            }
+            function confirmFinish1(e){
+                const result =  confirm("Are you sure you want to Finish this exam?");
+                if(result){
+                    return verifyRadio(e);
+                }else{
+                    e.preventDefault();
+                }
+            }
+            const  btn = document.getElementById("finishBtn");
+            btn.addEventListener('click',confirmFinish1);
+
             let deadline = new Date("{{$exam->deadline}}").getTime();
             {{--console.log(deadline,"{{$exam->deadline}}")--}}
             let x = setInterval(function() {
