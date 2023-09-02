@@ -16,36 +16,6 @@ class AnswerController extends Controller
      */
     public function update(UpdateAnswerRequest $request)
     {
-        $exam = Exam::find($request->exam_id);
-
-        if(!$exam) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Exam not found.',
-            ]);
-        }
-
-        if($exam->ended_at != null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Exam has ended.',
-            ]);
-        }
-
-        if ($exam->created_at->addMinutes(20) < now() && $request->json()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Time limit exceeded.',
-            ]);
-        }
-
-        if (Auth::user()->id != $exam->user_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You can\'t access this exam.',
-            ]);
-        }
-
         Answer::updateOrCreate([
             'question_id' => $request->question_id,
             'user_id' => Auth::user()->id,

@@ -100,20 +100,7 @@ class ExamController extends Controller
      */
     public function update(UpdateExamRequest $request, Exam $exam)
     {
-        if (Auth::user()->id != $exam->user_id)
-            return redirect()->back()->with("error","You can't access this Exam.");
 
-
-        if($exam->ended_at != null){
-            return redirect()->route('exams.show', $exam)->with('error', 'You have already submitted this exam.');
-        }
-        // if user hits finish the quiz after more than 20 minutes
-        if ($exam->created_at->addMinutes(20) < now() && $request->json()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Time limit exceeded.',
-                ]);
-        }
         if (Auth::user()->hasRole("user") && $request->has('finished')) {
             $exam->update([
                 'ended_at' => now(),

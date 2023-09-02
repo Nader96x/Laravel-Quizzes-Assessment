@@ -23,8 +23,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/quizzes', 'QuizController')->middleware("role:admin");
     Route::post('/quizzes/{id}/restore', 'QuizController@restore')->name("quizzes.restore")->middleware("role:admin");
     Route::resource('/questions', 'QuestionController')->middleware("role:admin");
-    Route::put('/answers', 'AnswerController@update')->name("answers.update");
+    Route::put('/answers', 'AnswerController@update')->name("answers.update")->middleware(["verifyExamAccess:true",'validAnswer']);
+
     Route::resource('/exams', 'ExamController');
+    Route::patch("exams/{exam}/update","ExamController@update")->name("exams.update")->middleware(['role:user',"validExam"]);
     Route::post('/exams/{exam}/sendmail', 'ExamController@sendmail')->name("exams.sendmail");
 });
 

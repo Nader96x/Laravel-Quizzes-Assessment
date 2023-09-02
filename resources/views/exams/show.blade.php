@@ -20,6 +20,8 @@
 
             <div class="col-md-12">
                 <p id="message" class="h4 text-danger"></p>
+                @include('partials.flash-message')
+
             </div>
             <hr/>
             @endrole
@@ -133,10 +135,11 @@
                 }).then((data)=>{
                     console.log(data);
                     if(data.message)document.getElementById("message").innerHTML = data.message;
-                    if(!data.success) window.location.reload();
+                    else document.getElementById("message").innerHTML = "";
+                    if(!data.success) setTimeout(()=>window.location.reload(),4000);
                 }).catch((error)=>{
                     document.getElementById("message").innerHTML = "Error: "+error;
-                    window.location.reload();
+                    setTimeout(()=>window.location.reload(),5000);
                 })
             }))
 
