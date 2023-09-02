@@ -15,8 +15,8 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css')}}" />
-    <link rel="stylesheet" href="{{ asset('https://cdn.datatables.net/1.13.6/css/dataTables.jqueryui.min.css')}}" />
-    <link rel="stylesheet" href="{{ asset('https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css')}}" />
+{{--    <link rel="stylesheet" href="{{ asset('https://cdn.datatables.net/1.13.6/css/dataTables.jqueryui.min.css')}}" />--}}
+{{--    <link rel="stylesheet" href="{{ asset('https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css')}}" />--}}
     @stack('styles')
 
 </head>
@@ -71,10 +71,10 @@
 
 
     @stack('scripts')
-    <script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js')}}"></script>
-    <script src="{{asset('https://cdn.datatables.net/1.13.6/js/dataTables.jqueryui.min.js')}}"></script>
-    <script src="{{asset('https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js')}}"></script>
-    <script src="{{asset('https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js')}}"></script>
+{{--    <script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js')}}"></script>--}}
+{{--    <script src="{{asset('https://cdn.datatables.net/1.13.6/js/dataTables.jqueryui.min.js')}}"></script>--}}
+{{--    <script src="{{asset('https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js')}}"></script>--}}
+{{--    <script src="{{asset('https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js')}}"></script>--}}
 {{--    <script src="{{asset('https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js')}}"></script>--}}
 </body>
 </html>

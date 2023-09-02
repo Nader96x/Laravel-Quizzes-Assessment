@@ -72,6 +72,14 @@ To set up and use the Quiz System, follow these steps:
 6. **Access the Application**
     - Open your web browser and navigate to `http://localhost:8000` to access the Quiz System.
 
+##  Future Features
+    - Add the ability to create quizzes with different types of questions (e.g., multiple-choice, true/false, short answer, etc.).
+    - Add the ability to create quizzes with different time limits.
+    - Add the ability to create quizzes with multiple attempts.
+    - Add User Friendly Sweet Alert.
+    - Add Login with Google, Facebook, and Twitter.
+
+
 ## Contributing
 Contributions are welcome! If you have suggestions or would like to report issues, please create a GitHub issue or submit a pull request.
 
