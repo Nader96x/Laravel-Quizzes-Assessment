@@ -18,24 +18,24 @@ class DatabaseSeeder extends Seeder
 
         Role::findOrCreate('admin');
         Role::findOrCreate('user');
-
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'silenthope2015@gmail.com',
-            'password'=>bcrypt('123456'),
-        ])->assignRole('admin');
-
-        User::factory()->create([
-            'name' => 'Student',
-            'email' => 'nader96x@gmail.com',
-            'password'=>bcrypt('123456'),
-        ])->assignRole('user');
-
-        Quiz::factory()->count(4)->create();
-
-        $this->call([
-            QuestionSeeder::class,
-        ]);
+        // add real users to recive emails
+//        User::factory()->create([
+//            'name' => 'Admin',
+//            'email' => 'admin@gmail.com',
+//            'password'=>bcrypt('123456'),
+//        ])->assignRole('admin');
+//
+//        User::factory()->create([
+//            'name' => 'Student',
+//            'email' => 'user@gmail.com',
+//            'password'=>bcrypt('123456'),
+//        ])->assignRole('user');
+//
+//        Quiz::factory()->count(4)->create();
+//
+//        $this->call([
+//            QuestionSeeder::class,
+//        ]);
 
 
         // \App\Models\User::factory(10)->create();

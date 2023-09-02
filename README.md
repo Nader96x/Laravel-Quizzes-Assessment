@@ -54,7 +54,7 @@ To set up and use the Quiz System, follow these steps:
 3. **Migrate and Seed Database**
     - Run the following commands to set up the database and seed it with initial data:
       ```bash
-      php artisan migrate
+      php artisan migrate --seed
       ```
 
 4. **Admin Creation**
