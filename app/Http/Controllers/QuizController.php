@@ -16,10 +16,8 @@ class QuizController extends Controller
     {
 //        dd(Auth::user()->hasRole('admin'));
         $quizzes = Quiz::all()->sortByDesc('id');
-        if (request()->ajax()) {
-            return datatables()->collection($quizzes)->toJson();
-        }
-        return view('quizzes.index',compact('quizzes'));
+        $trashed = Quiz::onlyTrashed()->get();
+        return view('quizzes.index',compact('quizzes','trashed'));
     }
 
     /**
@@ -37,15 +35,16 @@ class QuizController extends Controller
     {
 
         $quiz = Quiz::create($request->validated());
-
+        $quiz->delete();
         return redirect()->route('quizzes.show',$quiz->id)->with('success', 'Quiz created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Quiz $quiz)
+    public function show($id)
     {
+        $quiz = Quiz::withTrashed()->with('questions')->find($id);
         return view('quizzes.show', compact('quiz'));
     }
 
@@ -77,4 +76,20 @@ class QuizController extends Controller
 
         return redirect()->route('quizzes.index')->with('success', 'Quiz deleted successfully.');
     }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore($id)
+    {
+        $quiz = Quiz::withTrashed()->find($id);
+        if (!$quiz)
+            return redirect()->route('quizzes.index')->with('error', 'Quiz not found.');
+        if ($quiz->questions()->count() < 1)
+            return redirect()->route('quizzes.index')->with('error', 'Quiz can\'t be restored, Please add any questions first.');
+
+        $quiz->restore();
+        return redirect()->route('quizzes.index')->with('success', 'Quiz restored successfully.');
+    }
+
 }

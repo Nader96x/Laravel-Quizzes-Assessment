@@ -33,11 +33,19 @@
                                 <td>{{ $exam->created_at }}</td>
 
                                 <td>
-                                    <div class="d-flex justify-content-around">
+                                    <div class="d-flex justify-content-around ">
                                             <a class="btn btn-primary btn-sm mr-2" href="{{ route('exams.show',$exam->id) }}">
                                                 <i class="fas fa-eye"></i> View
                                             </a>
+                                        <form action="{{ route('exams.sendmail', $exam->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success btn-sm mr-2">
+                                                <i class="fas fa-envelope"></i> Send Mail
+                                            </button>
+                                        </form>
                                     </div>
+
+
                                 </td>
                             </tr>
                         @endforeach

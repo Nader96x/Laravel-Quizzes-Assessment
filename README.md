@@ -42,14 +42,15 @@ To set up and use the Quiz System, follow these steps:
 1. **Installation**
     - Clone this repository to your local machine.
 
-2. **Database Setup**
+2. **Database, Mail, Queue Setup**
     - Configure your database settings in the `.env` file.
+    - Configure your Mail settings in the `.env` file.
+    - convert `QUEUE_CONNECTION` from `sync` to `database` in the `.env` file.
 
 3. **Migrate and Seed Database**
     - Run the following commands to set up the database and seed it with initial data:
       ```bash
       php artisan migrate
-      php artisan db:seed
       ```
 
 4. **Admin Creation**
@@ -78,4 +79,4 @@ Contributions are welcome! If you have suggestions or would like to report issue
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or inquiries, please contact [Your Name] at [Your Email Address].
+For any questions or inquiries, please contact `Nader Mohammed` at `Nader96x@gmail.com`.

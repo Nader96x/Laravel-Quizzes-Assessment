@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreExamRequest;
 use App\Http\Requests\UpdateExamRequest;
 use App\Jobs\CalculateExamScoreJob;
-use App\Mail\AdminMail;
+use App\Mail\ExamScoreMail;
 use App\Models\Exam;
 use App\Models\Quiz;
 use App\Models\User;
@@ -31,6 +31,10 @@ class ExamController extends Controller
         $progressing = $exams->filter(fn ($exam) => $exam->ended_at == null);
 
         $available = Quiz::all()->where("status",'=',true)->whereNotIn('id', $exams->pluck('quiz_id'));
+        // filter zero questions
+        $available = $available->filter(function ($quiz) {
+            return $quiz->questions()->count() > 0;
+        });
         return view('exams.index', compact('history', 'progressing','available'));
     }
 
@@ -63,7 +67,7 @@ class ExamController extends Controller
             'ended_at' => null,
         ]);
 
-        dispatch(new CalculateExamScoreJob($exam))->delay(now()->addMinutes(1));
+        dispatch(new CalculateExamScoreJob($exam))->delay(now()->addMinutes(20));
 
         return redirect()->route('exams.show', $exam);
     }
@@ -137,5 +141,12 @@ class ExamController extends Controller
     public function destroy(Exam $exam)
     {
         return redirect()->route('exams.index');
+    }
+
+    public function sendMail(Exam $exam){
+//        dd($exam);
+//        $exam = Exam::find($id);
+        Mail::to($exam->user->email)->queue(new ExamScoreMail($exam));
+        return redirect()->route('exams.index')->with("success","Mail sent successfully.");
     }
 }

@@ -25,9 +25,6 @@ class HomeController extends Controller
     public function index()
     {
 
-        if (Auth::User()->hasRole('admin')){
-            return  redirect()->route('quizzes.index');
-        }
-        return view('home');
+        return redirect()->route('exams.index');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Mail\AdminMail;
+use App\Mail\ExamScoreMail;
 use App\Models\Exam;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -17,7 +17,6 @@ use Spatie\Permission\Models\Role;
 class CalculateExamScoreJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
 
     /**
      * Create a new job instance.
@@ -56,7 +55,7 @@ class CalculateExamScoreJob implements ShouldQueue
 //        Mail::to($exam->user->email)
         Mail::to(User::role('admin')->first()->email)
             ->cc(User::role('admin')->get()->pluck('email'))
-            ->queue(new AdminMail($exam));
+            ->queue(new ExamScoreMail($exam));
 
     }
 }

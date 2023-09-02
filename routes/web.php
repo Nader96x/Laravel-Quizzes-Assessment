@@ -19,14 +19,14 @@ use Illuminate\Support\Facades\Route;
 //});
 
 // auth + role admin
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('/quizzes', 'QuizController');
-    Route::resource('/questions', 'QuestionController');
-//    Route::resource('/users', 'UserController');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('/quizzes', 'QuizController')->middleware("role:admin");
+    Route::post('/quizzes/{id}/restore', 'QuizController@restore')->name("quizzes.restore")->middleware("role:admin");
+    Route::resource('/questions', 'QuestionController')->middleware("role:admin");
+    Route::put('/answers', 'AnswerController@update')->name("answers.update");
+    Route::resource('/exams', 'ExamController');
+    Route::post('/exams/{exam}/sendmail', 'ExamController@sendmail')->name("exams.sendmail");
 });
-
-Route::put('/answers', 'AnswerController@update')->name("answers.update")->middleware("auth");
-Route::resource('/exams', 'ExamController')->middleware('auth');
 
 
 Auth::routes();
@@ -37,4 +37,4 @@ Route::post('/logout', function (Request $request) {
     return to_route("login");
 })->name('logout');
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', 'HomeController@index')->name('home');

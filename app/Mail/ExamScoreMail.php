@@ -11,9 +11,10 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use function Laravel\Prompts\text;
 
-class AdminMail extends Mailable implements ShouldQueue
+class ExamScoreMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
 
     /**
      * Create a new message instance.
