@@ -17,6 +17,7 @@ class ValidExam
     public function handle(Request $request, Closure $next): Response
     {
         $exam = $request->exam;
+//        dd($exam);
 
         if (Auth::user()->id != $exam->user_id)
             return redirect()->back()->with("error","You can't access this Exam.");

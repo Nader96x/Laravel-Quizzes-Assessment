@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Choice;
+use App\Models\Exam;
 use App\Models\Question;
 use Closure;
 use Illuminate\Http\Request;

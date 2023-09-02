@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/exams', 'ExamController');
     Route::patch("exams/{exam}/update","ExamController@update")->name("exams.update")->middleware(['role:user',"validExam"]);
-    Route::post('/exams/{exam}/sendmail', 'ExamController@sendmail')->name("exams.sendmail");
+    Route::post('/exams/{exam}/sendmail', 'ExamController@sendmail')->name("exams.sendmail")->middleware(['role:admin']);
 });
 
 
