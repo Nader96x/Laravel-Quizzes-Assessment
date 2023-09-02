@@ -45,6 +45,11 @@
                                 </td>
                             </tr>
                         @endforeach
+                        @if($quizzes->count() == 0)
+                            <tr>
+                                <td colspan="5" class="text-center">No quizzes found.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 
@@ -89,6 +94,11 @@
                                 </td>
                             </tr>
                         @endforeach
+                        @if($trashed->count() == 0)
+                            <tr>
+                                <td colspan="5" class="text-center">No deactivated quizzes found.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 

@@ -14,7 +14,7 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        return redirect()->route('quizzes.index');
+        return redirect()->back();
     }
 
     /**
@@ -22,7 +22,7 @@ class QuestionController extends Controller
      */
     public function create()
     {
-        return redirect()->route('quizzes.index');
+        return redirect()->back();
     }
 
     /**

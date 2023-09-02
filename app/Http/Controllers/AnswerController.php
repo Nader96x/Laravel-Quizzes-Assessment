@@ -24,6 +24,7 @@ class AnswerController extends Controller
                 'message' => 'Exam not found.',
             ]);
         }
+
         if($exam->ended_at != null) {
             return response()->json([
                 'success' => false,
@@ -55,7 +56,6 @@ class AnswerController extends Controller
 
         return response()->json([
             'success' => true,
-//            'message' => 'Answer saved successfully.',
         ]);
     }
 

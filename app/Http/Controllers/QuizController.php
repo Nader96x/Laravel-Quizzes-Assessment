@@ -14,7 +14,6 @@ class QuizController extends Controller
      */
     public function index()
     {
-//        dd(Auth::user()->hasRole('admin'));
         $quizzes = Quiz::all()->sortByDesc('id');
         $trashed = Quiz::onlyTrashed()->get();
         return view('quizzes.index',compact('quizzes','trashed'));
