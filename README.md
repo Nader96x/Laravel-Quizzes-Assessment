@@ -41,6 +41,10 @@ To set up and use the Quiz System, follow these steps:
 
 1. **Installation**
     - Clone this repository to your local machine.
+    - Install the dependencies:
+      ```bash
+      composer install
+      ```
 
 2. **Database, Mail, Queue Setup**
     - Configure your database settings in the `.env` file.
